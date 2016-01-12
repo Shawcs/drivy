@@ -180,18 +180,22 @@ var BeginTime =  new Date(rentals[i].pickupDate);
 var EndTime = new Date(rentals[i].returnDate);
 
 var day=((EndTime-BeginTime)/(1000*60*60*24))+1;//cause it's in Ms
-if (day<=1){
+if (day => 1){
 	
 var dayPrice=(day*cars[i].pricePerDay)*0.90;	
 
 }
-else if (day <=4)
+else if (day > 4)
 {
 var dayPrice=(day*cars[i].pricePerDay)*0.70;
 }
-else if(day <=10)
+else if(day > 10)
 {
 var dayPrice=(day*cars[i].pricePerDay)*0.50;
+}
+else //if we don't match the day to avoid crash
+{
+var dayPrice=day*cars[i].pricePerDay;
 }
 
 
