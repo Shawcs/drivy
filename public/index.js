@@ -178,8 +178,21 @@ var priceKm = rentals[i].distance*cars[i].pricePerKm;
 	
 var BeginTime =  new Date(rentals[i].pickupDate);
 var EndTime = new Date(rentals[i].returnDate);
-var day=(EndTime-BeginTime)/(1000*60*60*24);//cause it's in Ms
-var dayPrice=day*cars[i].pricePerDay;
+
+var day=((EndTime-BeginTime)/(1000*60*60*24))+1;//cause it's in Ms
+if (day<=1){
+	
+var dayPrice=(day*cars[i].pricePerDay)*0.90;	
+
+}
+else if (day <=4)
+{
+var dayPrice=(day*cars[i].pricePerDay)*0.70;
+}
+else if(day <=10)
+{
+var dayPrice=(day*cars[i].pricePerDay)*0.50;
+}
 
 
 var prices= dayPrice+priceKm;
