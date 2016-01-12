@@ -240,7 +240,7 @@ function drivy(locNumber,com,insurance,road)
 }
 function replace()
 {
-	fot(var locNumber=0;locNumber<rentals.lenght;locNumber++)
+	for(var locNumber=0;locNumber<rentals.lenght;locNumber++)
 	{
 		insurance(locNumber,com);
 		roadside(locNumber,nbrDay);
