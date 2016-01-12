@@ -1,5 +1,4 @@
 'use strict';
-
 //list of cars
 //useful for ALL exercises
 var cars = [{
@@ -22,6 +21,7 @@ var cars = [{
 //The `price` is updated from exercice 1
 //The `commission` is updated from exercice 3
 //The `options` is useful from exercice 4
+
 var rentals = [{
   'id': '1-pb-92',
   'driver': {
@@ -165,7 +165,27 @@ var rentalModifications = [{
   'pickupDate': '2015-12-05'
 }];
 
-console.log(cars);
-console.log(rentals);
-console.log(actors);
-console.log(rentalModifications);
+
+function CalculPrix()
+{
+	
+for(var i=0; i< rentals.length;i++){
+	
+if(rentals[i].carId==cars[i].id){
+console.log(rentals[i].carId);	//to get the price for eatch cars
+var priceKm = rentals[i].distance*cars[i].pricePerKm;
+	
+	
+var BeginTime =  new Date(rentals[i].pickupDate);
+var EndTime = new Date(rentals[i].returnDate);
+var day=(EndTime-BeginTime)/(1000*60*60*24);//cause it's in Ms
+var dayPrice=day*cars[i].pricePerDay;
+
+
+var prices= dayPrice+priceKm;
+console.log(prices);
+}
+}
+}
+
+CalculPrix();
