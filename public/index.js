@@ -165,44 +165,97 @@ var rentalModifications = [{
   'pickupDate': '2015-12-05'
 }];
 
+function nbrDay(locNumber)
+{
+	
+	var BeginTime =  new Date(rentals[i].pickupDate);
+	var EndTime = new Date(rentals[i].returnDate);
+	var day=((EndTime-BeginTime)/(1000*60*60*24))+1;//cause it's in Ms
+  
+	return day;
+}
 
 function CalculPrix()
 {
-	
 for(var i=0; i< rentals.length;i++){
-	
-if(rentals[i].carId==cars[i].id){
-console.log(rentals[i].carId);	//to get the price for eatch cars
-var priceKm = rentals[i].distance*cars[i].pricePerKm;
-	
-	
-var BeginTime =  new Date(rentals[i].pickupDate);
-var EndTime = new Date(rentals[i].returnDate);
 
-var day=((EndTime-BeginTime)/(1000*60*60*24))+1;//cause it's in Ms
-if (day => 1){
-	
-var dayPrice=(day*cars[i].pricePerDay)*0.90;	
+	if(rentals[i].carId==cars[i].id){
+		//console.log(rentals[i].carId);	//to get the price for eatch cars
+		var priceKm = rentals[i].distance*cars[i].pricePerKm;		
+		var BeginTime =  new Date(rentals[i].pickupDate);
+		var EndTime = new Date(rentals[i].returnDate);
+		var day=((EndTime-BeginTime)/(1000*60*60*24))+1;//cause it's in Ms
 
+		if (day => 1){
+		var dayPrice=(day*cars[i].pricePerDay)*0.90;	
+		}
+		else if (day > 4)
+		{
+		var dayPrice=(day*cars[i].pricePerDay)*0.70;
+		}
+		else if(day > 10)
+		{
+		var dayPrice=(day*cars[i].pricePerDay)*0.50;
+		}
+		else //if we don't match the day to avoid crash
+		{
+		var dayPrice=day*cars[i].pricePerDay;
+		
+		}
+		var prices= dayPrice+priceKm;
+		
+		}
+	
+	return prices;
+	}
+	rentals.price[i]=prices;
 }
-else if (day > 4)
+
+function Commission(prix)
 {
-var dayPrice=(day*cars[i].pricePerDay)*0.70;
+	var com= prix*0.7;
+	return com;
 }
-else if(day > 10)
+function insurance(locNumber,com)
 {
-var dayPrice=(day*cars[i].pricePerDay)*0.50;
-}
-else //if we don't match the day to avoid crash
-{
-var dayPrice=day*cars[i].pricePerDay;
+	var insurance = com/2;
+	rentals[locNumber].commission.insurance=insurance;
+	return insurance;
 }
 
+function roadside(locNumber,day)
+{
+	var road= day*1;
+	rentals[locNumber].commission.assistance=road;
+	return road;
+	
+}
 
-var prices= dayPrice+priceKm;
-console.log(prices);
+function drivy(locNumber,com,insurance,road)
+{
+	var drivy =com-insurance-road;
+	rentals[locNumber].commision.drivy=drivy;
+	return drivy;
+	
 }
-}
+function replace()
+{
+	fot(var locNumber=0;locNumber<rentals.lenght;locNumber++)
+	{
+		insurance(locNumber,com);
+		roadside(locNumber,nbrDay);
+		drivy(locNumber,com,insurance,rod);
+	}
+	
 }
 
 CalculPrix();
+console.log(CalculPrix());
+Commission(CalculPrix());
+
+
+
+console.log(cars);
+console.log(rentals);
+console.log(actors);
+console.log(rentalModifications);
