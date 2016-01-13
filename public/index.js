@@ -1,4 +1,5 @@
 'use strict';
+
 //list of cars
 //useful for ALL exercises
 var cars = [{
@@ -21,7 +22,6 @@ var cars = [{
 //The `price` is updated from exercice 1
 //The `commission` is updated from exercice 3
 //The `options` is useful from exercice 4
-
 var rentals = [{
   'id': '1-pb-92',
   'driver': {
@@ -165,95 +165,120 @@ var rentalModifications = [{
   'pickupDate': '2015-12-05'
 }];
 
-function nbrDay(locNumber)
-{
+function numberDays(locationNumber) {
+	var pickupTime = new Date(rentals[locationNumber].pickupDate);
+	var returnTime = new Date(rentals[locationNumber].returnDate);
+	var days = (returnTime - pickupTime)/(1000*60*60*24); //cause it's in ms
 	
-	var BeginTime =  new Date(rentals[i].pickupDate);
-	var EndTime = new Date(rentals[i].returnDate);
-	var day=((EndTime-BeginTime)/(1000*60*60*24))+1;//cause it's in Ms
-  
-	return day;
+	return days+1;
 }
 
-function CalculPrix()
-{
-for(var i=0; i< rentals.length;i++){
-
-	if(rentals[i].carId==cars[i].id){
-		//console.log(rentals[i].carId);	//to get the price for eatch cars
-		var priceKm = rentals[i].distance*cars[i].pricePerKm;		
-		var BeginTime =  new Date(rentals[i].pickupDate);
-		var EndTime = new Date(rentals[i].returnDate);
-		var day=((EndTime-BeginTime)/(1000*60*60*24))+1;//cause it's in Ms
-
-		if (day => 1){
-		var dayPrice=(day*cars[i].pricePerDay)*0.90;	
-		}
-		else if (day > 4)
-		{
-		var dayPrice=(day*cars[i].pricePerDay)*0.70;
-		}
-		else if(day > 10)
-		{
-		var dayPrice=(day*cars[i].pricePerDay)*0.50;
-		}
-		else //if we don't match the day to avoid crash
-		{
-		var dayPrice=day*cars[i].pricePerDay;
-		
-		}
-		var prices= dayPrice+priceKm;
-		
-		}
-	
-	return prices;
-	}
-	rentals.price[i]=prices;
-}
-
-function Commission(prix)
-{
-	var com= prix*0.7;
-	return com;
-}
-function insurance(locNumber,com)
-{
-	var insurance = com/2;
-	rentals[locNumber].commission.insurance=insurance;
-	return insurance;
-}
-
-function roadside(locNumber,day)
-{
-	var road= day*1;
-	rentals[locNumber].commission.assistance=road;
-	return road;
-	
-}
-
-function drivy(locNumber,com,insurance,road)
-{
-	var drivy =com-insurance-road;
-	rentals[locNumber].commision.drivy=drivy;
-	return drivy;
-	
-}
-function replace()
-{
-	for(var locNumber=0;locNumber<rentals.lenght;locNumber++)
-	{
-		insurance(locNumber,com);
-		roadside(locNumber,nbrDay);
-		drivy(locNumber,com,insurance,rod);
+function priceLocation(locationNumber) {
+	var priceLoc = 0;
+	if(rentals[locationNumber].carId == cars[locationNumber].id){
+		return priceLoc = cars[0].pricePerDay * numberDays(locationNumber) + cars[0].pricePerKm * rentals[locationNumber].distance;
 	}
 	
+	else if(rentals[locationNumber].carId ==cars[locationNumber].id) {
+		return priceLoc = cars[1].pricePerDay * numberDays(locationNumber) + cars[1].pricePerKm * rentals[locationNumber].distance;
+	}
+	
+	else if(rentals[locationNumber].carId == cars[locationNumber].id) {
+		return priceLoc = cars[2].pricePerDay * numberDays(locationNumber) + cars[2].pricePerKm * rentals[locationNumber].distance;
+	}
 }
 
-CalculPrix();
-console.log(CalculPrix());
-Commission(CalculPrix());
+function priceReduction(locationNumber) {
+	if(numberDays(locationNumber) > 1) {
+		cars[locationNumber].pricePerDay = 0.9 * cars[locationNumber].pricePerDay;
+	}
+	
+	else if(numberDays(locationNumber) > 4) {
+		cars[locationNumber].pricePerDay = 0.7 * cars[locationNumber].pricePerDay;
+	}
+	
+	else if(numberDays(locationNumber) > 10) {
+		cars[locationNumber].pricePerDay = 0.5 * cars[locationNumber].pricePerDay;
+	}
+}
+
+function replacePrice() {
+	for(var locationNumber = 0; locationNumber < rentals.length; locationNumber++) {
+		priceReduction(locationNumber);
+		deductible(locationNumber);
+		rentals[locationNumber].price = priceLocation(locationNumber);
+	}
+}
+
+function Commission(locationNumber) {
+	var commission = rentals[locationNumber].price * 0.3;
+	rentals[locationNumber].commission.insurance = commission/2;
+	rentals[locationNumber].commission.assistance = numberDays(locationNumber)*1;
+	rentals[locationNumber].commission.drivy = commission - (rentals[locationNumber].commission.insurance + rentals[locationNumber].commission.assistance);
+}
+
+function replaceCommission() {
+	for(var locationNumber = 0; locationNumber < rentals.length; locationNumber++) {
+		Commission(locationNumber);
+	}
+}
+
+function deductible(locationNumber) {
+	if(rentals[locationNumber].deductibleReduction == true) {
+		rentals[locationNumber].price = rentals[locationNumber].price + numberDays(locationNumber)*4;
+	}
+}
 
 
+function ActorsPayment(locationNumber){
+  var actor = findActors(locationNumber);
+
+  var driver = findActor(actor,'driver');
+  driver.amount = locationNumber.price;
+
+  var owner = findActor(actor,"owner");
+  owner.amount = locationNumber.price - locationNumber.commission.insurance- locationNumber.commission.assistance-locationNumber.commission.drivy ;
+
+  var insurance = findActor(actor,"insurance");
+  insurance.amount = locationNumber.commission.insurance;
+
+  var assistance = findActor(actor,"assistance");
+  assistance.amount = locationNumber.commission.assistance;
+
+  var drivy = findActor(actor,"drivy");
+  drivy.amount = locationNumber.commission.drivy;
+}
+
+function findActor(actor , actorName){
+  for(var i = 0; i <actor.payment.length ;++i){
+    if(actor.payment[i].who == actorName){
+      return actor.payment[i];
+    }
+  }
+  return;
+}
+
+function findActors(locationNumber){
+
+  for(var i =0; i <actors.length; ++i){
+    if(actors[i].rentalId == locationNumber.id)
+      return actors[i];
+  }
+  return;
+}
+
+function addActorsPayments(){
+  for(var i = 0; i < rentals.length ;++i){
+    ActorsPayment(rentals[i]);
+  }
+}
+
+
+
+
+replacePrice();
+replaceCommission();
+addActorsPayments();
 
 console.log(cars);
 console.log(rentals);
