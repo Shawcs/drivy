@@ -273,13 +273,39 @@ function addActorsPayments(){
   }
 }
 
+function applyModifications(){
+  
+  for(var i =0 ; i < rentalModifications.length; ++i){
+    applyModification(rentalModifications[i]);
+  }
+}
+
+function applyModification(rentalModification){
+  var rental = findRental(rentalModification.rentalId);
+  for(var content in rentalModification){
+    if( content != "rentalId"){
+      rental[content] = rentalModification[content];
+    }
+  }
+}
+
+function findRental(rentalId){
+
+  for(var i =0; i < rentals.length ; ++i){
+    if(rentals[i].id == rentalId)
+      return rentals[i];
+  }
+  return;
+}
 
 
+applyModifications();
 
 replacePrice();
 replaceCommission();
 addActorsPayments();
 
+applyModifications()
 console.log(cars);
 console.log(rentals);
 console.log(actors);
